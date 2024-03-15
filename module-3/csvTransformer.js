@@ -8,9 +8,14 @@ const __dirname = path.dirname(__filename);
 const csvFilePath = path.join(__dirname, "csv", "csvTable.csv");
 const txtFilePath = path.join(__dirname, "csv", "example.txt");
 
-const readStream = fs.createReadStream(csvFilePath, {});
+const readStream = fs.createReadStream(csvFilePath);
 const writeStream = fs.createWriteStream(txtFilePath);
-const csvToJsonStream = csvtojson({ delimiter: ";", ignoreEmpty: true });
+const csvToJsonStream = csvtojson({
+  delimiter: ";",
+  ignoreEmpty: true,
+  headers: ["book", "author", "amount", "price"],
+  ignoreColumns: /(amount)/,
+});
 
 readStream.pipe(csvToJsonStream).pipe(writeStream);
 
