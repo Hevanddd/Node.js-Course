@@ -1,0 +1,15 @@
+{
+  "name": "node.js-course-module-5",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "./node_modules/.bin/pm2 start ./src/index.js --name ngmp-network-app --watch",
+    "stop": "./node_modules/.bin/pm2 stop ngmp-network-app"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "pm2": "^5.0.1"
+  }
+}
