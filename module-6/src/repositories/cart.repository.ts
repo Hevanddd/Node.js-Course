@@ -1,80 +1,37 @@
 import { randomUUID } from "crypto";
-import { CartEntity, CartItemEntity } from "../entities/cart.entity";
+import { CartItemEntity } from "../models/CartItem";
+import Cart, { CartEntity } from "../models/Cart";
 import { getDatabase } from "../utils/getDatabase";
+import Order, { OrderEntity, ORDER_STATUS } from "../models/Order";
 import { writeDatabase } from "../utils/writeDatabase";
-import { OrderEntity } from "../entities/order.entity";
 
-const getUserCartByUserId = async (userId: string): Promise<CartEntity> => {
-  const db = await getDatabase();
-
-  return db.carts.find((cart: CartEntity) => {
-    return cart.userId === userId;
-  });
+const getUserCartByUserId = async (
+  userId: string
+): Promise<CartEntity | null> => {
+  return await Cart.findOne({ userId });
 };
 
 const createUserCart = async (userId: string): Promise<CartEntity> => {
-  const db = await getDatabase();
-
-  const newCart: CartEntity = {
-    id: randomUUID(),
-    userId,
-    isDeleted: false,
-    items: [],
-  };
-
-  const updatedDb = { ...db, carts: [...db.carts, newCart] };
-
-  await writeDatabase(updatedDb);
-  return newCart;
+  return await Cart.create({ userId, isDeleted: false, items: [] });
 };
 
 const updateUserCart = async (userId: string, cartItem: CartItemEntity) => {
-  const db = await getDatabase();
-  const userCart = await getUserCartByUserId(userId);
+  const cart = await Cart.findOne({ userId });
 
-  if (!userCart) {
-    throw {
-      status: 404,
-      message: `Cart was not found`,
-    };
+  if (cart) {
+    cart.items = [
+      ...cart.items.filter((item) => item.product.id !== cartItem.product.id),
+      cartItem,
+    ];
+
+    await cart.save();
   }
 
-  const newUserCart = {
-    ...userCart,
-    items: [
-      ...userCart.items.filter(
-        (item) => item.product.id !== cartItem.product.id
-      ),
-      cartItem,
-    ],
-  };
-
-  const updatedDb = {
-    ...db,
-    carts: [
-      ...db.carts.filter((cart: CartEntity) => cart.userId !== userId),
-      newUserCart,
-    ],
-  };
-
-  await writeDatabase(updatedDb);
-  return newUserCart;
+  return cart;
 };
 
 const deleteUserCart = async (userId: string) => {
-  const db = await getDatabase();
-
-  const userCart = await getUserCartByUserId(userId);
-
-  const updatedDb = {
-    ...db,
-    carts: [
-      ...db.carts.filter((cart: CartEntity) => cart.userId !== userId),
-      { ...userCart, items: [] },
-    ],
-  };
-
-  await writeDatabase(updatedDb);
+  await Cart.updateOne({ userId }, { items: [] });
 };
 
 const createOrder = async (
@@ -83,32 +40,19 @@ const createOrder = async (
   items: CartItemEntity[],
   total: number
 ) => {
-  const db = await getDatabase();
-
-  const newOrder: OrderEntity = {
-    id: randomUUID(),
+  return await Order.create({
     userId,
     cartId,
     items,
-    total: total,
-
-    payment: {
-      type: "test",
-    },
+    total,
+    payment: { type: "test" },
     delivery: {
       type: "test",
       address: "test",
     },
     comments: "test",
-    status: "created",
-  };
-  const updatedDb = {
-    ...db,
-    orders: [newOrder],
-  };
-
-  await writeDatabase(updatedDb);
-  return newOrder;
+    status: ORDER_STATUS.CREATED,
+  });
 };
 
 export default {
