@@ -1,18 +1,13 @@
-import { getDatabase } from "../utils/getDatabase";
-import { ProductEntity } from "../entities/product.entity";
+import Product, { ProductEntity } from "../models/Product";
 
 const getProducts = async (): Promise<ProductEntity[]> => {
-  const db = await getDatabase();
-
-  return db.products;
+  return await Product.find();
 };
 
-const getProductById = async (productId: string): Promise<ProductEntity> => {
-  const db = await getDatabase();
-
-  return db.products.find((product: ProductEntity) => {
-    return product.id === productId;
-  });
+const getProductById = async (
+  productId: string
+): Promise<ProductEntity | null> => {
+  return await Product.findOne({ id: productId });
 };
 
 export default { getProducts, getProductById };
