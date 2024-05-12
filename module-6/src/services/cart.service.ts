@@ -1,5 +1,4 @@
-import { CartEntity } from "../models/Cart";
-import { CartItemEntity } from "../models/CartItem";
+import { CartItemEntity } from "../entities/CartItem";
 import cartRepository from "../repositories/cart.repository";
 import productRepository from "../repositories/product.repository";
 
@@ -12,7 +11,7 @@ const getTotalPriceOfProducts = (products: CartItemEntity[]) => {
 const getUserCart = async (userId: string) => {
   const userCart = await cartRepository.getUserCartByUserId(userId);
 
-  let cart: CartEntity;
+  let cart;
 
   if (userCart) {
     cart = userCart;
@@ -72,8 +71,6 @@ const createOrder = async (userId: string) => {
 
   const createdOrder = await cartRepository.createOrder(
     userId,
-    userCart.id,
-    userCart.items,
     getTotalPriceOfProducts(userCart.items)
   );
   await cartRepository.deleteUserCart(userId);
@@ -81,4 +78,9 @@ const createOrder = async (userId: string) => {
   return createdOrder;
 };
 
-export default { getUserCart, updateUserCart, deleteUserCart, createOrder };
+export default {
+  getUserCart,
+  updateUserCart,
+  deleteUserCart,
+  createOrder,
+};

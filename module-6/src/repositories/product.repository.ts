@@ -1,13 +1,16 @@
-import Product, { ProductEntity } from "../models/Product";
+import { ProductEntity, Product } from "../entities/Product";
 
-const getProducts = async (): Promise<ProductEntity[]> => {
-  return await Product.find();
-};
+import { DI } from "../index";
+
+const getProducts = async (): Promise<ProductEntity[]> =>
+  await DI.productRepository.findAll();
 
 const getProductById = async (
   productId: string
-): Promise<ProductEntity | null> => {
-  return await Product.findOne({ id: productId });
-};
+): Promise<ProductEntity | null> =>
+  await DI.productRepository.findOne({ id: productId });
 
-export default { getProducts, getProductById };
+export default {
+  getProducts,
+  getProductById,
+};
