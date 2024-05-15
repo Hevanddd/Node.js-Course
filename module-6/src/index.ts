@@ -3,21 +3,24 @@ import { productsRouter, cartRouter, authRouter } from "./routes";
 import { authenticationMiddleware } from "./middlewares/auth.middleware";
 import { errorHandlerMiddleware } from "./middlewares/errorHandler.middleware";
 import { connectToDb } from "./config/database";
+import dotenv from "dotenv";
 
-const PORT = 8000;
+dotenv.config();
+const { API_PORT } = process.env;
+const port = API_PORT || 8000;
 
 const app = express();
 
 connectToDb();
 app.use(express.json());
-app.use(authenticationMiddleware);
 
 app.use("/api/auth", authRouter);
+app.use(authenticationMiddleware);
 app.use("/api/profile/cart", cartRouter);
 app.use("/api/products", productsRouter);
 
 app.use(errorHandlerMiddleware);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

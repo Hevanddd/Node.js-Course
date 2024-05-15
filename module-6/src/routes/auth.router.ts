@@ -1,9 +1,11 @@
 import express from "express";
+import { validateScheme } from "../middlewares/schemaValidator.middleware";
+import { newUser, user } from "../schemas/user";
+import authController from "../controllers/auth.controller";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("To be done in module 9");
-});
+router.post("/register", validateScheme(newUser), authController.registerUser);
+router.post("/login", validateScheme(user), authController.loginUser);
 
 export default router;
