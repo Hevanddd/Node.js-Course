@@ -3,9 +3,7 @@ import cartService from "../services/cart.service";
 
 const getUserCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const userCart = await cartService.getUserCart(
-      req.headers["x-user-id"] as string
-    );
+    const userCart = await cartService.getUserCart(req.user.id);
 
     res.send({
       data: userCart,
@@ -22,10 +20,7 @@ const updateUserCart = async (
   next: NextFunction
 ) => {
   try {
-    const userCart = await cartService.updateUserCart(
-      req.headers["x-user-id"] as string,
-      req.body
-    );
+    const userCart = await cartService.updateUserCart(req.user.id, req.body);
 
     res.send({
       data: userCart,
@@ -42,7 +37,7 @@ const deleteUserCart = async (
   next: NextFunction
 ) => {
   try {
-    await cartService.deleteUserCart(req.headers["x-user-id"] as string);
+    await cartService.deleteUserCart(req.user.id);
 
     res.send({
       data: {
@@ -57,9 +52,7 @@ const deleteUserCart = async (
 
 const createOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const order = await cartService.createOrder(
-      req.headers["x-user-id"] as string
-    );
+    const order = await cartService.createOrder(req.user.id);
 
     res.send({
       data: order,

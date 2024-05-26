@@ -10,6 +10,12 @@ mongoose.set("toJSON", {
 });
 
 export function connectToDb() {
+  const { MONGO_URI } = process.env;
+  if (!MONGO_URI) {
+    console.log("Please provide DataBase URI to connect. exiting now...");
+    process.exit(1);
+  }
+
   mongoose
     .connect(uri)
     .then(() => {
