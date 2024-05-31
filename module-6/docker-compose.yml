@@ -1,5 +1,13 @@
-version: "3"
+version: "1"
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+    environment: 
+      - NODE_ENV=production
   mongo:
     image: "mongo"
     container_name: "nodegmp-nosql"
