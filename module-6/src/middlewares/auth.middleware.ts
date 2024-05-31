@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
 
 import { UserEntity } from "../models/User";
+import { logger } from "../logger";
 
 declare global {
   namespace Express {
@@ -19,6 +20,7 @@ export const authenticationMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
+    logger.error("Authentication error: Token is required");
     return res.status(401).send({
       data: null,
       error: {
@@ -30,6 +32,7 @@ export const authenticationMiddleware = (
   const [tokenType, token] = authHeader.split(" ");
 
   if (tokenType !== "Bearer") {
+    logger.error("Authentication error: Invalid Token");
     return res.status(403).send({
       data: null,
       error: {
@@ -43,6 +46,7 @@ export const authenticationMiddleware = (
 
     req.user = user;
   } catch (err) {
+    logger.error("Authentication error: Invalid Token");
     return res.status(401).send({
       data: null,
       error: {

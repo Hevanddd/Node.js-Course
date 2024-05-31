@@ -1,9 +1,6 @@
-import { randomUUID } from "crypto";
 import { CartItemEntity } from "../models/CartItem";
 import Cart, { CartEntity } from "../models/Cart";
-import { getDatabase } from "../utils/getDatabase";
-import Order, { OrderEntity, ORDER_STATUS } from "../models/Order";
-import { writeDatabase } from "../utils/writeDatabase";
+import Order, { ORDER_STATUS } from "../models/Order";
 
 const getUserCartByUserId = async (
   userId: string

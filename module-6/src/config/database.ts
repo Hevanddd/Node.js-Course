@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-
-const uri: string = "mongodb://root:nodegmp@localhost:27017/mydatabase";
+import { logger } from "../logger";
 
 mongoose.set("toJSON", {
   virtuals: true,
@@ -11,17 +10,18 @@ mongoose.set("toJSON", {
 
 export function connectToDb() {
   const { MONGO_URI } = process.env;
+
   if (!MONGO_URI) {
-    console.log("Please provide DataBase URI to connect. exiting now...");
+    logger.error("Please provide DataBase URI to connect. exiting now...");
     process.exit(1);
   }
 
   mongoose
-    .connect(uri)
+    .connect(MONGO_URI)
     .then(() => {
-      console.log("Succesfully connected to MongoDB");
+      logger.info("Succesfully connected to MongoDB");
     })
     .catch((error: Error) => {
-      console.log(`Error connecting to MongoDB: ${error}`);
+      logger.error(`Error connecting to MongoDB: ${error}`);
     });
 }
